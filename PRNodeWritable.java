@@ -15,10 +15,10 @@ public class PRNodeWritable implements Writable{
     public PRNodeWritable(){
     }
 
-    public PRNodeWritable(int nodeId, double p, boolean flag){
+    public PRNodeWritable(int nodeId, double p, boolean isNode){
         this.nodeId = nodeId;
         this.p = p;
-        this.isNode = flag;
+        this.isNode = isNode;
         this.adjList = new ArrayList<Integer>();
     }
 
@@ -48,7 +48,7 @@ public class PRNodeWritable implements Writable{
         }
     }
 
-    public void setP(double p) {
+    public void setP(double p){
         this.p = p;
     }
 

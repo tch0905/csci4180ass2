@@ -70,15 +70,15 @@ public class PRPreProcess {
         FileOutputFormat.setOutputPath(job, new Path(outPath));
         return job;
     }
-    public static void main(String[] args) throws Exception {
-        Configuration conf = new Configuration();
-        String inPath = args[0];
-        String outPath = args[1];
-        Job job = Job.getInstance(conf, "Testing");
-        Job preJob = PRPreProcess.preConfig(conf, inPath, outPath);
-
-
-    }
+//    public static void main(String[] args) throws Exception {
+//        Configuration conf = new Configuration();
+//        String inPath = args[0];
+//        String outPath = args[1];
+//        Job job = Job.getInstance(conf, "Testing");
+//        Job preJob = PRPreProcess.preConfig(conf, inPath, outPath);
+//
+//
+//    }
 }
 
 
