@@ -3,7 +3,7 @@
 ```bash
 scp -r -P 13062 ..\pageRank\ hadoop@projgw.cse.cuhk.edu.hk:
 ```
-
+pw:123
 
 ```bash
 cd .. 
