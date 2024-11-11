@@ -22,15 +22,13 @@ public class PRNodeWritable implements Writable{
         this.adjList = new ArrayList<Integer>();
     }
 
-    public PRNodeWritable(String value){
-        String[] tokens = value.split("\\s+");
-        this.nodeId = Integer.parseInt(tokens[1]);
-        this.p = Double.parseDouble(tokens[2]);
-        this.isNode = Boolean.parseBoolean(tokens[3]);
+    public void set(PRNodeWritable node){
+        this.nodeId = node.getNodeId();
+        this.p = node.getP();
+        this.isNode = node.isNode();
         this.adjList = new ArrayList<Integer>();
-
-        for(int i=4; i<tokens.length; i++){
-            add(Integer.parseInt(tokens[i]));
+        for(Integer val: node.adjList){
+            add(val);
         }
     }
 
@@ -38,15 +36,7 @@ public class PRNodeWritable implements Writable{
         this.adjList.add(m);
     }
 
-    public void set(PRNodeWritable node){
-        this.nodeId = node.getNodeId();
-        this.p = node.getP();
-        this.isNode = node.isFlag();
-        this.adjList = new ArrayList<Integer>();
-        for(Integer val: node.adjList){
-            add(val);
-        }
-    }
+
 
     public void setP(double p){
         this.p = p;
@@ -64,7 +54,12 @@ public class PRNodeWritable implements Writable{
         return adjList;
     }
 
-    public boolean isFlag() {
+    public List<Integer> setAdjList(List<Integer> adjList) {
+        this.adjList = adjList;
+        return adjList;
+    }
+
+    public boolean isNode() {
         return isNode;
     }
 

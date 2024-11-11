@@ -51,7 +51,8 @@ public class PRPreProcess {
                     node.add(m);
                 }
             }
-//            context.getCounter(PageRank.COUNTER.NODENUM).increment(1);
+
+            context.getCounter(PageRank.COUNTER.TOTALNODE).increment(1);
             context.write(key, node);
         }
     }
