@@ -17,7 +17,11 @@ import java.util.StringTokenizer;
 
 public class PageRank {
     public enum COUNTER{
-        TOTALNODE
+        TOTALNODE,
+    }
+
+    public static enum PageRankCounter {
+        PAGERANK;
     }
 
     public static class ThresholdProcessMapper extends Mapper<Object, Text, Text, DoubleWritable> {
@@ -101,6 +105,8 @@ public class PageRank {
     }
 
     public static class PRMainLoopReducers extends Reducer<Text , PRNodeWritable, Text, PRNodeWritable>{
+
+        private double totalPangRank;
         public void reduce(Text key, Iterable<PRNodeWritable> values, Context context) throws IOException, InterruptedException {
 
             double sum = 0;
@@ -121,11 +127,17 @@ public class PageRank {
             }
 
             newNode.setP(sum);
+            totalPangRank += sum;
+            context.getCounter(PageRankCounter.PAGERANK).increment((long)(sum* 1000000000));
 
             // Emit the updated node
             context.write(key, newNode);
 
         }
+//        public void cleanup(Context context) throws IOException, InterruptedException {
+//            context.getConfiguration().set("total", totalPangRank.toString());
+//        }
+
     }
 
     public static Job prMainLoop(Configuration conf, String inPath, String outPath, int i)throws Exception{
@@ -172,6 +184,18 @@ public class PageRank {
             tempOutputPath = tempPath + counter;
             Job i_job = prMainLoop(conf,tempInputPath, tempOutputPath, counter);
             i_job.waitForCompletion(true);
+            long totalP_long = i_job.getCounters().findCounter(PageRankCounter.PAGERANK).getValue();
+            double totalP = Double.longBitsToDouble(totalP_long);
+            System.out.println("totalP");
+            System.out.println(totalP);
+            System.out.println("totalP_long");
+            System.out.println(totalP_long);
+            conf.setDouble("totalP", totalP);
+            tempInputPath = tempOutputPath + "/part-r-00000";
+            tempOutputPath = tempPath + "/adjust/"+ counter;
+            Job i_adjust = PRAdjust.prAdjust(conf,tempInputPath, tempOutputPath, counter);
+            i_adjust.waitForCompletion(true);
+
 
         }
         tempInputPath = tempOutputPath + "/part-r-00000";
