@@ -83,10 +83,14 @@ public class PRAdjust {
             Configuration conf = context.getConfiguration();
             Double alpha = Double.parseDouble(conf.get("alpha"));
 //            Double total = 1.0;
-            Double total = (double) Long.parseLong(conf.get("totalP")) ;
-            total /= 1000000000;
-//            Long totalNode = Long.parseLong(conf.get("totalNode"));
-            Long totalNode = 6l;
+            Double total =Double.parseDouble(conf.get("totalP")) ;
+//            total /= 1000000000;
+            System.out.print("total equal");
+            System.out.println(total);
+            Long totalNode = Long.parseLong(conf.get("totalNode"));
+//            Long totalNode = 6l;
+            System.out.print("totalNode equal");
+            System.out.println(totalNode);
 
             for (PRNodeWritable val : values) {
                 Double adjustPageRank = alpha * (1.0 / totalNode) +
