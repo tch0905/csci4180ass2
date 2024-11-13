@@ -177,7 +177,7 @@ public class PageRank {
         conf.setLong("totalNode", totalNode);
 
         boolean isFirst = true;
-        for (counter = 1; counter < ite; counter++) {
+        for (counter = 1; counter <= ite; counter++) {
             conf.setBoolean("isFirst", isFirst);
             isFirst = false;
             tempInputPath = tempOutputPath + "/part-r-00000";
