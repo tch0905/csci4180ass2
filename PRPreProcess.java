@@ -14,10 +14,10 @@ import java.util.*;
 public class PRPreProcess {
     public static class PRPreMapper extends Mapper<Object, Text, Text, Text>{
         private Stack<String> nodeSet;
-        @Override
-        public void setup(Context context){
-            nodeSet = new Stack<String>();
-        }
+//        @Override
+//        public void setup(Context context){
+//            nodeSet = new Stack<String>();
+//        }
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException{
             StringTokenizer itr = new StringTokenizer(value.toString());
@@ -27,12 +27,12 @@ public class PRPreProcess {
                 String des = itr.nextToken();
 
                 //If des is a dangling point
-                if(!nodeSet.contains(des)){
+//                if(!nodeSet.contains(des)){
                     context.write(new Text(des), new Text("-1"));
-                }
-
-                nodeSet.add(src);
-                nodeSet.add(des);
+//                }
+//
+//                nodeSet.add(src);
+//                nodeSet.add(des);
 
                 context.write(new Text(src), new Text(des));
             }
@@ -71,15 +71,7 @@ public class PRPreProcess {
         FileOutputFormat.setOutputPath(job, new Path(outPath));
         return job;
     }
-//    public static void main(String[] args) throws Exception {
-//        Configuration conf = new Configuration();
-//        String inPath = args[0];
-//        String outPath = args[1];
-//        Job job = Job.getInstance(conf, "Testing");
-//        Job preJob = PRPreProcess.preConfig(conf, inPath, outPath);
-//
-//
-//    }
+
 }
 
 

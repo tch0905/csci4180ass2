@@ -16,10 +16,19 @@ hadoop fs -rm -r /temp
 hadoop fs -rm -r /user/hadoop/output
 hadoop com.sun.tools.javac.Main *.java
 jar cf wc.jar *.class
-hadoop jar ../pageRank/wc.jar PageRank 0 3 0.05 /user/hadoop/input/PageRankSmall /user/hadoop/output 
+hadoop jar ../pageRank/wc.jar PageRank 0.1 2 0 /user/hadoop/input/PageRankSmall /user/hadoop/output 
 hadoop fs -cat /user/hadoop/output/part-r-00000
 hadoop fs -ls /temp
 
+```
+```bash
+hadoop fs -rm -r /temp
+hadoop fs -rm -r /user/hadoop/output
+hadoop com.sun.tools.javac.Main *.java
+jar cf wc.jar *.class
+hadoop jar ../pageRank/wc.jar PageRank 0.1 2 0 /user/hadoop/input/PageRankLarge /user/hadoop/output
+hadoop fs -cat /user/hadoop/output/part-r-00000
+hadoop fs -ls /temp
 ```
 
 ```bash
