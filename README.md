@@ -16,7 +16,7 @@ hadoop fs -rm -r /temp
 hadoop fs -rm -r /user/hadoop/output
 hadoop com.sun.tools.javac.Main *.java
 jar cf wc.jar *.class
-hadoop jar ../pageRank/wc.jar PageRank 0.1 1 0 /user/hadoop/input/PageRankSmall /user/hadoop/output 
+hadoop jar ../pageRank/wc.jar PageRank 0.1 4 0 /user/hadoop/input/PageRankSmall /user/hadoop/output 
 hadoop fs -cat /user/hadoop/output/part-r-00000
 hadoop fs -ls /temp
 
@@ -49,6 +49,16 @@ hadoop com.sun.tools.javac.Main PRPreProcess.java PRNodeWritable.java
 jar cf wc.jar *.class
 hadoop jar ../pageRank/wc.jar PRPreProcess /user/hadoop/input/PageRankSmall /user/hadoop/output
 
+```
+```bash
+hadoop fs -rm -r /temp
+hadoop fs -rm -r /user/hadoop/output
+hadoop com.sun.tools.javac.Main *.java
+jar cf wc.jar *.class
+hadoop jar ../pageRank/wc.jar PageRank 1 4 0 /user/hadoop/input/PageRankLarge /user/hadoop/output
+hadoop fs -cat /user/hadoop/output/part-r-00000 > output2.txt
+hadoop fs -ls /temp
+diff ./output.txt ../pankrank_output2.txt
 ```
 ```bash
 ### if so, then run the code below first

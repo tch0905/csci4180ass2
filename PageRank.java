@@ -186,13 +186,13 @@ public class PageRank {
             i_job.waitForCompletion(true);
             long totalP_long = i_job.getCounters().findCounter(PageRankCounter.PAGERANK).getValue();
 
-            Double totalP = (double)totalP_long;
-            totalP /= 1000000000;
-            System.out.println("totalP");
-            System.out.println(totalP);
-            System.out.println("totalP_long");
-            System.out.println(totalP_long);
-            conf.setDouble("totalP", totalP);
+//            Double totalP = (double)totalP_long;
+//            totalP /= 1000000000;
+//            System.out.println("totalP");
+//            System.out.println(totalP);
+//            System.out.println("totalP_long");
+//            System.out.println(totalP_long);
+//            conf.setDouble("totalP", totalP);
             tempInputPath = tempOutputPath + "/part-r-00000";
             tempOutputPath = tempPath + "/adjust/"+ counter;
             Job i_adjust = PRAdjust.prAdjust(conf,tempInputPath, tempOutputPath, counter);

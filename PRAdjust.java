@@ -33,6 +33,7 @@ public class PRAdjust {
         }
 
         PRNodeWritable node = new PRNodeWritable(nodeId, pagerank, isNode);
+        node.setAdjList(adjacencyList);
 		IntWritable one = new IntWritable(1);
 		context.write(one,node);
 	}
@@ -106,9 +107,10 @@ public class PRAdjust {
                     Context context
                     ) throws IOException, InterruptedException {
 		for(PRNodeWritable val : values){
-            if(val.getAdjList().isEmpty()){
-                mass+=val.getP();
-            }
+//            if(val.getAdjList().isEmpty()){
+//                mass+=val.getP();
+//            }
+            mass+=val.getP();
 
 
 			PRNodeWritable tmp = new PRNodeWritable();
