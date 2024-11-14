@@ -122,12 +122,12 @@ public class PRAdjust {
         mass = 1.0 - mass;
         for(int i=0;i<this.list.size();i++){
         //context.write(NullWritable.get(),list.get(i));
-        PRNodeWritable tmp_node = new PRNodeWritable();
-        tmp_node.set(list.get(i));
-        Double tmp_rank = tmp_node.getP();
-        tmp_rank = alpha*(1.0/number_node) + (1.0-alpha)*(tmp_rank + mass/number_node);
-        tmp_node.setP(tmp_rank);
-        context.write(new Text(String.valueOf(tmp_node.getNodeId())),tmp_node);
+            PRNodeWritable tmp_node = new PRNodeWritable();
+            tmp_node.set(list.get(i));
+            Double tmp_rank = tmp_node.getP();
+            tmp_rank = alpha*(1.0/number_node) + (1.0-alpha)*(tmp_rank + mass/number_node);
+            tmp_node.setP(tmp_rank);
+            context.write(new Text(String.valueOf(tmp_node.getNodeId())),tmp_node);
 		}
     }
 

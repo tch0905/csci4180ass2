@@ -128,7 +128,7 @@ public class PageRank {
 
             newNode.setP(sum);
 //            totalPangRank += sum;
-            context.getCounter(PageRankCounter.PAGERANK).increment((long)(sum* 1000000000));
+//            context.getCounter(PageRankCounter.PAGERANK).increment((long)(sum* 1000000000));
 
             // Emit the updated node
             context.write(key, newNode);
