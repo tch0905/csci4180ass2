@@ -24,17 +24,17 @@ public class PRPreProcess {
 
             if(itr.hasMoreTokens()){
                 String src = itr.nextToken();
-                String des = itr.nextToken();
+                String outgoingNode = itr.nextToken();
 
                 //If des is a dangling point
 //                if(!nodeSet.contains(des)){
-                    context.write(new Text(des), new Text("-1"));
+                    context.write(new Text(outgoingNode), new Text("-1"));
 //                }
 //
 //                nodeSet.add(src);
 //                nodeSet.add(des);
 
-                context.write(new Text(src), new Text(des));
+                context.write(new Text(src), new Text(outgoingNode));
             }
         }
     }
@@ -44,7 +44,7 @@ public class PRPreProcess {
 
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException{
             Integer nodeId = Integer.parseInt(key.toString());
-            PRNodeWritable node = new PRNodeWritable(nodeId, 1, true);
+            PRNodeWritable node = new PRNodeWritable(nodeId, 1.0, true);
             for(Text val : values){
                 int m = Integer.parseInt(val.toString());
                 if(m != -1){

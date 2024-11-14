@@ -31,9 +31,9 @@ public class PageRank {
 
             // Extract node information from the text
             String nodeId = tokens[1];
-            double pagerank = Double.parseDouble(tokens[2]);
+            Double pagerank = Double.parseDouble(tokens[2]);
             Configuration conf = context.getConfiguration();
-            double threshold = Double.parseDouble(conf.get("threshold"));
+            Double threshold = Double.parseDouble(conf.get("threshold"));
             if(pagerank>threshold) {
                 context.write(new Text(nodeId), new DoubleWritable(pagerank));
 
@@ -46,7 +46,7 @@ public class PageRank {
         public void reduce(Text key, Iterable<DoubleWritable> values,  Context context) throws IOException, InterruptedException {
 
 //            Configuration conf = context.getConfiguration();
-//            double threshold = Double.parseDouble(conf.get("threshold"));
+//            Double threshold = Double.parseDouble(conf.get("threshold"));
 //            threshold = 2.0;
             for(DoubleWritable val: values){
 //                if(pagerank>threshold) {
@@ -74,7 +74,7 @@ public class PageRank {
 
             // Extract node information from the text
             Integer nodeId = Integer.parseInt(tokens[1]);
-            double pagerank = Double.parseDouble(tokens[2]);
+            Double pagerank = Double.parseDouble(tokens[2]);
             boolean isNode = Boolean.parseBoolean(tokens[3]);
             List<Integer> adjacencyList = new ArrayList<Integer>();
 
@@ -95,7 +95,7 @@ public class PageRank {
             context.write(new Text(nodeId.toString()), node);
 
             // Emit contributions to each neighbor's PageRank
-            double contribution = pagerank / adjacencyList.size();
+            Double contribution = pagerank / adjacencyList.size();
             for (Integer neighbor : adjacencyList) {
                 context.write(new Text(neighbor.toString()), new PRNodeWritable(neighbor, contribution, false));
 
@@ -106,10 +106,10 @@ public class PageRank {
 
     public static class PRMainLoopReducers extends Reducer<Text , PRNodeWritable, Text, PRNodeWritable>{
 
-        private double totalPangRank;
+        private Double totalPangRank =0.0;
         public void reduce(Text key, Iterable<PRNodeWritable> values, Context context) throws IOException, InterruptedException {
 
-            double sum = 0;
+            Double sum = 0.0;
 
             // Create a new NodeWritable object with updated PageRank
             PRNodeWritable newNode = new PRNodeWritable();
@@ -127,7 +127,7 @@ public class PageRank {
             }
 
             newNode.setP(sum);
-            totalPangRank += sum;
+//            totalPangRank += sum;
             context.getCounter(PageRankCounter.PAGERANK).increment((long)(sum* 1000000000));
 
             // Emit the updated node
@@ -186,7 +186,7 @@ public class PageRank {
             i_job.waitForCompletion(true);
             long totalP_long = i_job.getCounters().findCounter(PageRankCounter.PAGERANK).getValue();
 
-            double totalP = (double)totalP_long;
+            Double totalP = (double)totalP_long;
             totalP /= 1000000000;
             System.out.println("totalP");
             System.out.println(totalP);

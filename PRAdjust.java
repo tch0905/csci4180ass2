@@ -16,41 +16,54 @@ public class PRAdjust {
 
 ;
 
-    public static class PRAdjustMapper extends Mapper<Object, Text, Text, PRNodeWritable> {
+    public static class PRAdjustMapper extends Mapper<Object, Text, IntWritable, PRNodeWritable>{
+	public void map(Object key, Text value, Context context
+                    ) throws IOException, InterruptedException {
+        String[] tokens = value.toString().split("\\s+");
 
+        // Extract node information from the text
+        Integer nodeId = Integer.parseInt(tokens[1]);
+        Double pagerank = Double.parseDouble(tokens[2]);
+        boolean isNode = Boolean.parseBoolean(tokens[3]);
+        List<Integer> adjacencyList = new ArrayList<Integer>();
 
-
-//        @Override
-//        public void setup(Context context) {
-//            total  = 0.0;
-//        }
-
-        ArrayList<PRNodeWritable> list = new ArrayList<PRNodeWritable>();
-
-        public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String[] tokens = value.toString().split("\\s+");
-
-            // Extract node information from the text
-            Integer nodeId = Integer.parseInt(tokens[1]);
-            double pagerank = Double.parseDouble(tokens[2]);
-            boolean isNode = Boolean.parseBoolean(tokens[3]);
-            List<Integer> adjacencyList = new ArrayList<Integer>();
-
-            for(int i=4; i<tokens.length; i++){
-                adjacencyList.add(Integer.parseInt(tokens[i]));
-            }
-
-
-//            total += pagerank;
-
-            PRNodeWritable node = new PRNodeWritable(nodeId, pagerank, isNode);
-            node.setAdjList(adjacencyList);
-
-
-            // Emit the node
-            context.write(new Text(nodeId.toString()), node);
-//            list.add(value);
+        // Extract adjacency list
+        for(int i=4; i<tokens.length; i++){
+            adjacencyList.add(Integer.parseInt(tokens[i]));
         }
+
+        PRNodeWritable node = new PRNodeWritable(nodeId, pagerank, isNode);
+		IntWritable one = new IntWritable(1);
+		context.write(one,node);
+	}
+
+
+//        ArrayList<PRNodeWritable> list = new ArrayList<PRNodeWritable>();
+
+//        public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+//            String[] tokens = value.toString().split("\\s+");
+//
+//            // Extract node information from the text
+//            Integer nodeId = Integer.parseInt(tokens[1]);
+//            Double pagerank = Double.parseDouble(tokens[2]);
+//            boolean isNode = Boolean.parseBoolean(tokens[3]);
+//            List<Integer> adjacencyList = new ArrayList<Integer>();
+//
+//            for(int i=4; i<tokens.length; i++){
+//                adjacencyList.add(Integer.parseInt(tokens[i]));
+//            }
+//
+//
+////            total += pagerank;
+//
+//            PRNodeWritable node = new PRNodeWritable(nodeId, pagerank, isNode);
+//            node.setAdjList(adjacencyList);
+//
+//
+//            // Emit the node
+//            context.write(new Text(nodeId.toString()), node);
+////            list.add(value);
+//        }
 
 //        public void cleanup(Context context) throws IOException, InterruptedException {
 //            total = 0.0;
@@ -75,31 +88,47 @@ public class PRAdjust {
 //        }
 
 
-    public static class PRAdjustReducer extends Reducer<Text, PRNodeWritable, Text, PRNodeWritable> {
+    public static class PRAdjustReducer
+            extends Reducer<IntWritable,PRNodeWritable,Text,PRNodeWritable> {
 
-        public void reduce(Text key, Iterable<PRNodeWritable> values, Context context) throws IOException, InterruptedException {
-
-
+	    private Double alpha;
+	    private Integer number_node;
+	    private Double mass = 0.0;
+	    private List<PRNodeWritable> list;
+        protected void setup(Context context)  throws IOException, InterruptedException {
             Configuration conf = context.getConfiguration();
-            Double alpha = Double.parseDouble(conf.get("alpha"));
-//            Double total = 1.0;
-            Double total =Double.parseDouble(conf.get("totalP")) ;
-//            total /= 1000000000;
-            System.out.print("total equal");
-            System.out.println(total);
-            Long totalNode = Long.parseLong(conf.get("totalNode"));
-//            Long totalNode = 6l;
-            System.out.print("totalNode equal");
-            System.out.println(totalNode);
+            this.alpha = Double.parseDouble(conf.get("alpha"));
+            this.number_node = Integer.parseInt(conf.get("totalNode"));
+            list = new ArrayList<PRNodeWritable>();
+                }
 
-            for (PRNodeWritable val : values) {
-                Double adjustPageRank = alpha * (1.0 / totalNode) +
-                        (1 - alpha) * ((1 - total) / totalNode + val.getP());
-
-                val.setP(adjustPageRank);
-                context.write(key, val);
+	public void reduce(IntWritable key, Iterable<PRNodeWritable> values,
+                    Context context
+                    ) throws IOException, InterruptedException {
+		for(PRNodeWritable val : values){
+            if(val.getAdjList().isEmpty()){
+                mass+=val.getP();
             }
-        }
+
+
+			PRNodeWritable tmp = new PRNodeWritable();
+			tmp.set(val);
+			list.add(tmp);
+		}
+	}
+	 public void cleanup(Context context) throws IOException, InterruptedException {
+        mass = 1.0 - mass;
+        for(int i=0;i<this.list.size();i++){
+        //context.write(NullWritable.get(),list.get(i));
+        PRNodeWritable tmp_node = new PRNodeWritable();
+        tmp_node.set(list.get(i));
+        Double tmp_rank = tmp_node.getP();
+        tmp_rank = alpha*(1.0/number_node) + (1.0-alpha)*(tmp_rank + mass/number_node);
+        tmp_node.setP(tmp_rank);
+        context.write(new Text(String.valueOf(tmp_node.getNodeId())),tmp_node);
+		}
+    }
+
     }
 
 
@@ -112,7 +141,7 @@ public class PRAdjust {
         job.setJarByClass(PRAdjust.class);
         job.setMapperClass(PRAdjustMapper.class);
         job.setReducerClass(PRAdjustReducer.class);
-        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(PRNodeWritable.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(PRNodeWritable.class);

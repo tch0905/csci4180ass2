@@ -8,14 +8,14 @@ import java.util.List;
 
 public class PRNodeWritable implements Writable{
     private int nodeId;
-    private double p;
+    private Double p;
     private List<Integer> adjList;
     private boolean isNode; //true: a node; false: not a node
 
     public PRNodeWritable(){
     }
 
-    public PRNodeWritable(int nodeId, double p, boolean isNode){
+    public PRNodeWritable(int nodeId, Double p, boolean isNode){
         this.nodeId = nodeId;
         this.p = p;
         this.isNode = isNode;
@@ -38,7 +38,7 @@ public class PRNodeWritable implements Writable{
 
 
 
-    public void setP(double p){
+    public void setP(Double p){
         this.p = p;
     }
 
@@ -46,7 +46,7 @@ public class PRNodeWritable implements Writable{
         return nodeId;
     }
 
-    public double getP() {
+    public Double getP() {
         return p;
     }
 
