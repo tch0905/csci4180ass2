@@ -33,8 +33,10 @@ public class PRPreProcess {
 //
 //                nodeSet.add(src);
 //                nodeSet.add(des);
+                if(src != outgoingNode){
+                    context.write(new Text(src), new Text(outgoingNode));
+                }
 
-                context.write(new Text(src), new Text(outgoingNode));
             }
         }
     }
