@@ -184,7 +184,7 @@ public class PageRank {
             tempOutputPath = tempPath + counter;
             Job i_job = prMainLoop(conf,tempInputPath, tempOutputPath, counter);
             i_job.waitForCompletion(true);
-            long totalP_long = i_job.getCounters().findCounter(PageRankCounter.PAGERANK).getValue();
+//            long totalP_long = i_job.getCounters().findCounter(PageRankCounter.PAGERANK).getValue();
 
 //            Double totalP = (double)totalP_long;
 //            totalP /= 1000000000;
